@@ -1,0 +1,867 @@
+---
+title: "Capstone_Project_CyclistBikeRides"
+author: "Sutapa"
+date: "2023-07-25"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+#**A new marketing strategy for a bike-share company**
+ This is a capstone project
+
+## **Scenerio**
+
+You are a junior data analyst working in the marketing analyst team at Cyclistic, a bike-share company in Chicago. The director of marketing believes the company’s future success depends on maximizing the number of annual memberships. Therefore,your team wants to understand how casual riders and annual members use Cyclistic bikes differently. From these insights,your team will design a new marketing strategy to convert casual riders into annual members. But first, Cyclistic executives must approve your recommendations, so they must be backed up with compelling data insights and professional data visualizations.
+
+##**About the company**
+
+In 2016, Cyclistic launched a successful bike-share offering. Since then, the program has grown to a fleet of 5,824 bicycles that are geotracked and locked into a network of 692 stations across Chicago. The bikes can be unlocked from one station and returned to any other station in the system anytime.  Until now, Cyclistic’s marketing strategy relied on building general awareness and appealing to broad consumer segments. One approach that helped make these things possible was the flexibility of its pricing plans: single-ride passes, full-day passes, and annual memberships. Customers who purchase single-ride or full-day passes are referred to as casual riders. Customers who purchase annual memberships are Cyclistic members.  Cyclistic’s finance analysts have concluded that annual members are much more profitable than casual riders. Although the pricing flexibility helps Cyclistic attract more customers, Moreno believes that maximizing the number of annual members will be key to future growth. Rather than creating a marketing campaign that targets all-new customers, Moreno believes there is a very good chance to convert casual riders into members. She notes that casual riders are already aware of the Cyclistic program and have chosen Cyclistic for their mobility needs.  Moreno has set a clear goal: Design marketing strategies aimed at converting casual riders into annual members. In order to do that, however, the marketing analyst team needs to better understand how annual members and casual riders differ, why casual riders would buy a membership, and how digital media could affect their marketing tactics. Moreno and her team are interested in analyzing the Cyclistic historical bike trip data to identify trends.  
+
+## ** Step 1: Ask**
+
+The goal on this step is a clear statement of the business task.
+
+###**The business task**
+
+Design marketing strategies aimed at converting casual riders into annual members.
+
+**Assumptions**: The strategy will be based on the idea that annual members are more profitable, and that’s why we need to increase the number of annual members.One of the ways of getting annual members is the conversion of casual riders to annual members. To check it and develop a proper marketing strategy, we need to understand, how we could motivate casual riders to buy an annual membership.
+
+###**Three questions will guide the future marketing program:**
+
+*Define how annual members and casual riders use Cyclistic bikes differently.
+*Figure out why casual riders would buy Cyclistic annual memberships.
+*Make recommendations on how Cyclistic can use digital media to influence casual riders to become members.
+
+##**Key stakeholders**
+***Cyclistic executive team** - will decide whether to approve the recommended marketing program.
+***Lily Moreno - director of marketing** - responsible for the development of campaigns and initiatives to promote the bike-share program.
+
+## ** Step 2: Prepare**
+
+The aim on this stage is to determine all data sources to be used for this analysis.
+
+##**Data source**
+
+```{r}
+# import the data files
+`2022-06.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202206-divvy-tripdata/202206-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-06.tripdata`)
+`2022-07.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202207-divvy-tripdata/202207-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-07.tripdata`)
+`2022-08.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202208-divvy-tripdata/202208-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-08.tripdata`)
+`2022-09.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202209-divvy-tripdata/202209-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-09.tripdata`)
+ `2022-10.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202210-divvy-tripdata/202210-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-10.tripdata`)
+`2022-11.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202211-divvy-tripdata/202211-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-11.tripdata`)
+`2022-12.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202212-divvy-tripdata/202212-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2022-12.tripdata`)
+`2023-01.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202301-divvy-tripdata/202301-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2023-01.tripdata`)
+`2023-02.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202302-divvy-tripdata/202302-bikeshare-tripdata.csv", encoding="ASCII")
+  View(`2023-02.tripdata`)
+`2023-03.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202303-divvy-tripdata/202303-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2023-03.tripdata`)
+`2023-04.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202304-divvy-tripdata/202304-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2023-04.tripdata`)
+`2023-05.tripdata` <- read.csv("C:/Users/Administrator/Desktop/Case Study 1/202305-divvy-tripdata/202305-bikeshare-tripdata.csv", encoding="ASCII")
+ View(`2023-05.tripdata`)
+```
+
+We are interested in the last 12 months of records. It simplifies the task because the data have the same structure and format.  The data range for this analysis is June 2022 - May 2023. It means, we'll take only rides started in this range, but some of them can end later. The dataset consists of 12 CSV-files containing records of every ride made by casual or member customer of the bike-share company. In total we have 5829030 entries and 13 columns.  For every ride in the dataset we can get it's start and end date and time and GPS-coordinates together with the start and end station IDs and names. We can also see if the rider was a member or casual rider, and what type of bike the rider has used.
+
+##**Licensing, privacy, security, and accessibility**
+This data is public and provided according to the Divvy Data License Agreement.Using riders’ personally identifiable information is not allowed.
+
+##**How does it help to answer the business questions?**
+The dataset doesn't include any information about the riders, and there is no way to get and analyse all rides made by the same rider. It means, that we cannot analyse individual riders’ behavior. We can only work with separate trips.Without any information about riders in the dataset, it will be hard to make any recommendations about the market segments for the new marketing strategy.  However, we can analyse the rides numbers, duration, destination and position of their start and destination points on the map, and see the difference between rides taken by members and casual customers, which can help to reach the casual riders and motivate them to buy the annual membership.
+
+## ** Step 3: Process**
+
+##**Tools used**
+For this analysis R is chosen, because the dataset is large, and a lot of calculations will be needed for additional variables, that could be helpful in the analysis. R can work fast with datasets like this, and it has all the necessary functions for cleaning and analysis of our dataset. With R it will be also easier to document and share the data cleaning and analysis processes.
+
+##**Import and Evaluation of the data**
+The purpose of this step is to prepare the data for analysis - to clean, transform and organize the data - and write documentation of the cleaning or manipulation of data.
+
+First of all let's install and load all packages, which we'll use for our analysis.
+
+```{r}
+# installing and loading packages
+install.packages('tidyverse', repos = "http://cran.us.r-project.org")
+library(tidyverse) # for data cleaning
+library(readr) # to read .csv file
+library(dplyr) # for combining all data in one frame
+library(hms) # extracting hour from datetime
+library(lubridate) # for date function
+
+install.packages('geosphere', repos = "http://cran.us.r-project.org") # for calculation of distance between two geo points
+
+library(geosphere)
+
+install.packages('skimr', repos = "http://cran.us.r-project.org") # for viewing and evaluating data
+library(skimr)
+install.packages('ggplot2', repos = "http://cran.us.r-project.org") # for visualization
+library(ggplot2)
+
+install.packages('ggmap', repos = "http://cran.us.r-project.org") # for map visualization
+library(ggmap)
+install.packages('plyr', repos = "http://cran.us.r-project.org")
+library(plyr)
+```
+##**Data integrity verification and problems found**
+
+*We consider the data as collected by the bike-share company (first-party data), and therefore it is original and can be trusted.
+*The data set is large enough to represent all customers well enough.
+*The data is just a set of historical facts about all bike trips with the company’s bikes, hence it is not biased. The data provider also says that the data has been processed to remove trips that are taken by staff as they service and inspect the system; and any trips that were below 60 seconds in length (potentially false starts or users trying to re-dock a bike to ensure it was secure).
+*In the datasets for the last 12 months, we have no data about the riders - no gender, age, etc.
+*The data is current, the last dataset is collected in May2023. No sensitive, private or potentially harmful information is included or shared.
+*We cannot guarantee that in the dataset we have records of all trips taken with the company's bikes.  Accordingly to the metadata in past, some trips might be missing.
+
+Let's check if the data records are complete.
+
+```{r}
+# combine data into one data frame
+ 
+rides_last_12_months <- dplyr::bind_rows(`2022-06.tripdata`, `2022-07.tripdata`, `2022-08.tripdata`, `2022-09.tripdata`, `2022-10.tripdata`, `2022-11.tripdata`, `2022-12.tripdata`, `2023-01.tripdata`, `2023-02.tripdata`, `2023-03.tripdata`, `2023-04.tripdata`, `2023-05.tripdata`)
+```
+
+
+```{r}
+str(rides_last_12_months)
+# evaluate the data, echo = TRUE
+
+skim_without_charts(rides_last_12_months)
+```
+##** Some data are missing**
+*start_station_name          834545   of   5829030   
+*start_station_id            834677   of   5829030  
+*end_station_name            891757   of   5829030   
+*end_station_id              891898   of   5829030
+*end_lat                      5961    of   5829030     
+*end_lng                      5961    of   5829030
+
+Also, there is an abnormality in the data,that probably can be explained by Christmas Holidays.
+
+```{r}
+# check for gaps
+
+ride_filtered <- rides_last_12_months %>% 
+  filter(started_at > "2022-12-18") %>% 
+  filter(started_at < "2022-12-31")
+
+ggplot(data = ride_filtered) +
+  geom_point(mapping =aes(x = started_at, y = member_casual, color = member_casual), position = position_jitter()) +
+  xlab("start date and time") +
+  ylab("customer type") +
+  labs(title = "Decrease number of trips")
+```
+##**Cleaning process**
+Data cleaning is a process of identifying and fixing gaps and errors in a dataset, like duplicates, incorrect data, and incomplete data. Let's examine and clean our dataset.
+
+##**1.Remove entries with blank space**
+We remove all rows with blank space from the data, and then check if the new data is complete.
+
+```{r}
+#  removing blanks spaces 
+
+ df1 <- subset(rides_last_12_months, start_station_name != "" | start_station_id != "")
+ df2 <- subset( df1, end_station_name != "" | end_station_id  != "" )
+ df3 <- subset(df2, start_lat != "" & start_lng != "" )
+ df4 <- subset( df3, end_lat != "" & end_lng != "" )
+ df5 <- subset(df4,member_casual != "" )
+ str(df5)
+```
+
+We have eliminated 1334103 incomplete rows.Now the data is complete and contains 4494927 entries.
+
+##** 2.Check for duplicates**
+
+```{r}
+ unique(df5$ride_id)
+ 
+ df6 <- unique(df5$ride_id)
+
+ # Remove duplicate in ride_id
+ 
+ df6 <- df5[!duplicated(df5$ride_id), ]
+```
+
+We see that there are 4493899 entries in the dataset now, and ride_id field has 4493899 unique values. It means, that there are no rows with the same ride_id in the dataset. All the rows are unique, and we have no duplicates.
+
+## **3.Check for incorrect values**
+Let's check all our fields for incorrect values.
+
+**Character values**
+As we see in the table above, there is no whitespaces in our data. Let's check the values of rideable_type and member_casual variables.
+
+```{r}
+# check values for customer type and bike type
+ table(df6$rideable_type)
+ table(df6$member_casual)
+```
+
+We see, that there is no problem with the values - no similar values, no upper- or lowercase issues.
+
+**Start and end date-time range**
+The ranges are correct:
+
+*Start datetime: 2022-05-01 00:00:06 to 2023-04-30 23:58:48
+*End datetime:   2022-05-01 00:05:17 to 2023-05-01 08:06:56
+Let's try to filter out rides that are started later than ended in our dataset.
+
+```{r}
+df6 <- df6 %>% 
+   filter(started_at < ended_at)
+ nrow(df6)
+```
+
+**Start and end coordinates**
+
+Coordinates of Chicago are (41.8781, 87.6298), so our trip start and end points should have coordinates close to this point. Let's check the coordinates range in our data.
+
+```{r}
+# check start and end coordinates}
+ df6 %>% 
+   select(start_lat, start_lng, end_lat, end_lng) %>% 
+   summary()
+```
+
+We see that some rows have 0 values for end lalitude and longtitude. Those rows are incorrect and should be removed.
+
+```{r}
+ # removing entries with wrong coordinates
+ df6 <- df6 %>% 
+   filter(end_lat != 0 & end_lng != 0) 
+ 
+ nrow(df6)
+```
+
+We have successfully removed  entries with incorrect coordinates.
+
+Let's check the rides' duration. We'll draw a skatter plot to examine duration of trips in our data.
+
+```{r}
+# check ride duration
+df7 <- df6 %>% 
+  mutate(duration_s = as.numeric(as.character(difftime(ended_at, started_at))))
+
+ggplot(data = df7) + geom_point(mapping = aes(x = member_casual, y = duration_s), position = position_jitter()) +
+  geom_hline(yintercept=86400, color = "red") + 
+  labs(title="Rides duration by customer type", 
+       caption="From June 2022 to May 2023",
+       x="Customer type",
+       y="Ride duration (sec)") + 
+  annotate("text", x=0.5, y=150000, label="86,400", color = "red")
+```
+
+We see some outliers on the plot. For casual riders, the duration of some rides hugely exceed 24 hours (86400 sec), that is the maximum duration for a daily pass. That could be rides of stolen, lost, forgotten or broken bikes. Those cases are out of a usual bike usage, therefore we can consider them as invalid for our analysis. Let's eliminate those outliers.
+
+```{r}
+# remove outliers and check again
+df6 <- df7 %>% 
+  filter(as.numeric(as.character(difftime(ended_at, started_at))) <= 120000)
+
+ggplot(data = df6) + geom_point(mapping = aes(x = member_casual, y = as.numeric(as.character(difftime(ended_at, started_at)))), 
+                                        position = position_jitter()) +
+  geom_hline(yintercept=86400, color = "red") + #draw a line at y = 86400
+  labs(title="Rides duration by customer type", 
+       caption="From June 2022 to May 2023",
+       x="Customer type",
+       y="Ride duration (sec)") + 
+  annotate("text", x=0.5, y=90000, label="86,400", color = "red")
+
+nrow(df6)
+```
+
+We have successfully eliminated outliers. There are still entries with duration greater than 24 hours. It can happen when someone was late returning the bike to the station. We'll keep those records.
+
+##**4.Data types check**
+
+All columns have proper data types.
+
+##**Data transformation**
+Let's think about how we need to transform the data to work effectively with it. In order to determine how annual members and casual riders use the company's bikes differently, we need the following metrics that can be calculated from the data we have already in the initial dataset:
+
+***How long do customers use the bikes?** We need to know the ride duration (seconds) = the difference between the ride's end datetime and start time.
+***How far do the customers ride?** We are interested in the ride distance (meters) = how far are the start and end points from each other.
+***In what time of the day do the customers use the bikes most?** We need to know the hour at which the trip started.
+***What days of the week do the customers use bikes more often?** We need to know the day of the week the ride started.
+***What months do the customers use bikes more often?** We need to know what month the trip started.
+*We'll also need for every ride its start day and month for aggregation.
+
+Let's add the columns with the data calculated. And let's rename the member_casual column to customer_type to make it more clear.
+```{r}
+# adding and renaming columns
+  df8 <- df6 %>% 
+    mutate(duration_s = difftime(ended_at, started_at, units = "secs")) %>% 
+    mutate(distance_m = distHaversine(cbind(start_lng, start_lat), cbind(end_lng, end_lat))) %>% 
+    mutate(start_hour = hour(started_at)) %>% 
+    mutate(start_day = format(as.Date(started_at), "%d")) %>%
+    mutate(start_day_of_week = format(as.Date(started_at), "%A")) %>%
+    mutate(start_year = format(as.Date(started_at), "%Y")) %>%
+    mutate(start_month = month(started_at, label = TRUE, abbr = FALSE)) %>% 
+    mutate(is_weekend = if_else(start_day_of_week == "Saturday" | start_day_of_week == "Sunday", TRUE, FALSE, missing = NULL)) %>% 
+    rename(customer_type = member_casual)
+
+# labels for facet_wrap
+  days.labs <- c("Weekdays", "Weekends")
+  names(days.labs) <- c("FALSE", "TRUE")
+  
+  skim_without_charts(df8)
+  
+```
+
+## ** Step 4: Analyse**
+
+On this step we observe the data from different points of view and make conclusions based on the observations.
+
+##**Total rides taken**
+
+First of all, we'll look closely on the total amount of rides taken by the customers with the company's bikes. We have two types of customers - members and casual riders. Let's see how the total number of trips is split into those categories of riders.
+
+```{r}
+# total rides by customer types
+df8 %>% 
+  group_by(customer_type) %>% 
+  summarise(ride_count = n()) %>% 
+  ggplot(aes(x = customer_type, y = ride_count, fill=customer_type)) +
+    geom_bar(stat='identity') + 
+    #coord_polar("y", start=90) +
+    geom_text(aes(label = ride_count), vjust = -0.5) + 
+    geom_text(aes(label = paste0(round(ride_count/nrow(df8) * 100, 2), "%"), vjust = 1.5)) +
+    labs(x="Casuals riders vs members", y="Number of rides", title= "Rides distribution by customer type") + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+On the chart we see that during the 12 months of observations members have taken 61.14% of all rides, and casual riders - only 38.86%.
+
+##**Bike types used**
+
+The company offers three types of bikes: classic, docked, and electric. On the bar chart below we can see the total number of rides the customers took using the three different types of bicycles from June 2022 to May 2023.
+
+```{r}
+# bike types used
+df8 %>% 
+  group_by(customer_type, rideable_type) %>% 
+  summarize(ride_count = n(),.groups="drop") %>% 
+  ggplot(aes(x = rideable_type, y = ride_count, fill = customer_type)) + 
+    geom_bar(stat='identity', position = "dodge") + 
+    geom_text(aes(label = ride_count), vjust = -0.5) + 
+    geom_text(aes(label = paste0(round(ride_count/nrow(df8) * 100, 2), "%"), vjust = 1.5)) +
+    labs(title="Bike types used by casual and member users",
+       caption="From May 2022 to April 2023",
+       x="Bike types",
+       y="Number of rides") + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+We see that both members and casual riders use classic bikes more often than other types of bikes.
+
+*Casual customers prefer classic bikes more often than electric bikes. They have chosen classic bikes in 19.02% cases, and electric bikes in 16.41% cases.
+*For members the ratio of classic bikes used to electric bikes is also more. They have made 38.53% of all rides by classic bikes, and 21.61% by electric ones.
+*Docked bikes have been used by casual riders only - in 3.43% of all rides.
+
+##**How long the customers rode**
+
+Now let's look at the rides duration.
+
+```{r}
+# duration by customer type
+df8 %>%
+  group_by(customer_type) %>% 
+  summarise(average_ride_duration = mean(duration_s), 
+            median_ride_duration = median(duration_s), 
+            max_ride_duration = max(duration_s), 
+            min_ride_duration = min(duration_s))
+```
+
+We see that casual riders ride longer on average than members. The maximum duration is not significantly different for members vs casual riders.
+
+##**How far the riders went**
+
+Let's look at the rides distance.
+
+```{r}
+# distance by customer type
+df8 %>%
+  group_by(customer_type) %>% 
+  summarise(average_ride_distance = mean(distance_m), 
+            median_ride_distance = median(distance_m), 
+            max_ride_distance = max(distance_m), 
+            min_ride_distance = min(distance_m))
+```
+
+Casual members ride more distant than members on average. The maximum distance is not significantly different for members vs casual riders.
+
+##**Start and destination locations**
+
+Let's examine the rides start and destination points on the map. We are interested only in the most popular stations. Let's consider a station to be popular if it has been recorded as a start or end point for more than 250 rides. First of all, we need to configure a map in R, then build separate map charts for start and end points by customer type.
+
+```{r}
+# city map for the map plot
+city_chicago <- c(left = -87.83000, bottom = 41.750000, right = -87.530000, top = 42.06500)
+map_chicago <- get_stamenmap(bbox = city_chicago, zoom = 10, maptype = "terrain")
+
+# dataframe with popular start points
+popular_start_points <- df8 %>% 
+  group_by(start_lng, start_lat, customer_type, start_hour) %>%
+  summarize(n_rides = n(),.groups="drop") %>% 
+  filter(n_rides > 250)
+
+# dataframe with popular destinations
+popular_end_points <- df8 %>% 
+  group_by(end_lng, end_lat, customer_type, start_hour) %>%
+  summarize(n_rides = n(),.groups="drop") %>% 
+  filter(n_rides > 250)
+
+# locations of start points
+ggmap(map_chicago) +
+  geom_point(popular_start_points, mapping = aes(x = start_lng, y = start_lat, color=customer_type), size = 0.75) +
+  facet_grid(~ customer_type, labeller = labeller(is_weekend = days.labs)) +
+  labs(title = "Most popular starting points", x=NULL, y=NULL) +
+  scale_colour_discrete("Customer type: ")
+
+# locations of end points
+ggmap(map_chicago) +
+  geom_point(popular_end_points, mapping = aes(x = end_lng, y = end_lat, color=customer_type), size = 0.75) +
+  facet_grid(~ customer_type, labeller = labeller(is_weekend = days.labs)) +
+  labs(title = "Most popular destination points", x=NULL, y=NULL) +
+  scale_colour_discrete("Customer type: ")
+```
+
+We can notice, that for both casual rides and members, trips concentrate more in the city center and north part of the city. Start points are located closer to the city center. Destination points are also concentrated mostly in the city center, but there are noticeably more of them outside the city center, compared to starting points. Both starting points and destinations for members are located over a wider area in comparison to casual riders.
+
+The map chart can help to determine better locations for the new marketing campaign ads.
+
+Now let's analyse the difference in the number of rides, and average duration and distance by rider types for different time cycles - during a year, a week and a day.
+
+##**Rides in 12 months**
+
+The company's customers have made more than 4.53 million rides in the last 12 months. The bar chart below shows the total number of rides made from June 2022 to May 2023. Let's see if the riders behavior changes during the year.
+
+**Number of rides by month**
+
+```{r}
+# arrange months properly to represent the last 12 months of observations we analyse
+
+df8$start_month <- ordered(df8$start_month, levels=c("June", "July", "August", "September", "October", "November", "December", "January", "February", "March", "April", "May"))
+
+# number of rides by rider type and month
+df8 %>% 
+  group_by(start_month, customer_type) %>% 
+  summarise(number_of_rides = n(), .groups = 'drop') %>% 
+  ggplot(aes(x = start_month, y = number_of_rides, fill = customer_type)) + geom_col(position = "dodge") + 
+  geom_text(aes(label = number_of_rides), vjust = -0.25, size = 3) +
+  labs(title="Number of rides for casual and member riders by month",
+       caption="From June 2022 to May 2023",
+       x="Months",
+       y="Number of rides") +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+Both casual riders and members have recorded more rides from April to November, most of all in summer months:
+
+*members have shown the highest activity in August 2022, and the lowest activity in December 2022.
+*casual riders were most active in July 2022, and least active in January 2023
+
+In autumn and winter, members have made much more rides than casual riders:
+
+*the highest difference: 4 times more in January
+*the lowest difference: 1.42 times more in September
+
+The best riding season for members lasts a month longer. While the number of rides made by casual riders starts to drop in August, members activity stays on top also in September.
+
+It looks like casual riders used the bikes mostly for leisure activities, and that's why they are much more active in warm season (which lasts for Chicago from May to September) than in cold months. Members seem to use the bikes for both leisure and work purposes.
+
+##**Average ride duration by month**
+
+Now let's analyse the average ride duration during the 12 month.
+
+```{r}
+# average duration by rider type and month
+avg_duration_month <- df8 %>% 
+  group_by(start_month, customer_type) %>% 
+  summarize(avg_duration = mean(duration_s), .groups = 'drop')
+
+ggplot(data = avg_duration_month, aes(x = start_month, y = avg_duration, fill = customer_type)) +
+  geom_col(position = "dodge") + 
+  geom_text(aes(label = round(avg_duration)), vjust = -0.25) +
+  labs(title="Average ride duration for casual and member riders by month",
+       caption="From June 2022 to May 2023",
+       x="Months",
+       y="Average ride duration (sec)") +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+Every month casual riders rode much longer than members - from 45.6% (in December) to 100.8% (in May) longer.
+
+Ride duration for members lasted in average from 10 to 13.6 minutes, and was higher from May to September. The longest rides they made in June. The shortest - from December to March.
+
+For casual riders, ride duration differs much more intensive: from 14.9 to 27.7 minutes. In May they have made the longest rides. In December and January their average ride duration was the lowest.
+
+##**Average ride distance by month**
+
+Now let's look at the average distance.
+
+```{r}
+# average distance by rider type and month
+avg_distance_month <- df8 %>% 
+  group_by(start_month, customer_type) %>% 
+  summarize(avg_distance = mean(distance_m), .groups = 'drop')
+
+ggplot(data = avg_distance_month, aes(x = start_month, y = avg_distance, fill = customer_type)) +
+  #facet_wrap(~customer_type) + 
+  geom_col(position = "dodge") +
+  labs(title="Average ride distance for casual and member riders by month",
+       caption="From June 2022 to May 2023",
+       x="Months",
+       y="Average ride distance (meters)") +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+As we can see on the chart, average distance doesn't differ significantly across the rider types. The average distance was slightly less from November 2022 to March 2023 for both customer types.
+
+##**Rides during a week**
+Let's see and compare the riders activity during a week for the two types of customers.
+
+**Number of rides during a week**
+
+Every day of the week appears 52 or 53 times in a 12-months date range. To be able to compare the number of rides across days of the week, we need to normalize the number of rides and compare the average number of rides each rider type have taken on Mondays, Tuesdays, and so on.
+
+```{r}
+# arrange days of the week properly
+df8$start_day_of_week <- ordered(df8$start_day_of_week, 
+                                         levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+# avg number of rides during a week
+
+defaultW <- getOption("warn")
+options(warn = -1)
+
+# returns a number of a certain day of the week in the defined date range
+
+n_days_of_week_in_range <- function(startDate, endDate, day_of_week){
+  myDates <-seq(from = startDate, to = endDate, by = "days")
+  n_of_days = length(which(format(as.Date(myDates), "%A") == day_of_week))
+  return(n_of_days)
+}
+
+# date range for our analysis
+startDate <- dmy("01-June-2022")
+endDate <- dmy("31-May-2023")
+
+# data frame having total and average number of rides by days of the week and customer type
+rides_by_day_of_week <- df8 %>% 
+  group_by(start_day_of_week, customer_type) %>% 
+  summarise(n_rides = n(), .groups = 'drop') %>% 
+  mutate(avg_rides = round(n_rides/n_days_of_week_in_range(startDate, endDate, start_day_of_week)))
+
+options(warn = defaultW)
+# chart showing average number of rides by days of the week and customer type
+
+rides_by_day_of_week %>% 
+  ggplot(aes(x = start_day_of_week, y = avg_rides, fill = customer_type)) + geom_col(position = "dodge") + 
+  geom_text(aes(label = avg_rides), vjust = -0.25) +
+  labs(title="Average nubmer of rides for casual and member riders by days of week",
+       caption="From June 2022 to May 2023",
+       x="Day of week",
+       y="Average number of rides") +
+  theme(axis.text.x = element_text(angle = 45))
+```
+
+The riders behavior differs significantly on weekdays and weekends.
+
+On weekends the average amount of rides is about the same for members and casual riders. The ratio of rides made by members to casual rides is 1.06 on Saturday and 1.15 on Sunday.
+
+##**On weekdays members made much more rides than casual riders:**
+
+*the greatest difference: on Tuesdays members made 1.97 times more rides than casual riders, and on Wednesdays  1.98 more rides.
+*the smallest difference: on Fridays members made 1.51 times more rides than casual riders.
+
+###**Ride duration during a week**
+
+```{r}
+# average duration by rider type
+avg_duration_week <- df8 %>% 
+  group_by(start_day_of_week, customer_type) %>% 
+  summarize(avg_duration = mean(duration_s), .groups = 'drop')
+
+ggplot(data = avg_duration_week, aes(x = start_day_of_week, y = avg_duration, fill = customer_type)) +
+  geom_col(position = "dodge") + 
+  geom_text(aes(label = round(avg_duration)), vjust = -0.25) +
+  labs(title="Average ride duration for casual and member riders by days of week",
+       caption="From June 2022 to May 2023",
+       x="Day of week",
+       y="Average ride duration (sec)") +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_fill_discrete(name = "Customer type: ")
+
+```
+
+We see that casual riders ride longer on weekends than in on weekdays. The difference in trip duration for different days of the week is not that big for members.
+
+##**Ride distance during a week**
+
+```{r}
+# average distance by rider type
+avg_distance_week <- df8 %>% 
+  group_by(start_day_of_week, customer_type) %>% 
+  summarize(avg_distance = mean(distance_m), .groups = 'drop')
+
+ggplot(data = avg_distance_week, aes(x = start_day_of_week, y = avg_distance, fill = customer_type)) +
+  #facet_wrap(~customer_type) + 
+  geom_col(position = "dodge") + 
+  geom_text(aes(label = round(avg_distance)), vjust = -0.25) +
+  labs(title="Average ride distance for casual and member riders by days of week",
+       caption="From June 2022 to May 2023",
+       x="Day of week",
+       y="Average ride distance (meters)") +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+
+What we see on the chart above:
+
+*Casual riders have a slightly higher mean ride distance than members: they rode from 30 to 105 meters more distant in comparison to the average distance about 2000 meters.
+*Average distance doesn't differ significantly across the rider types or during the week.
+*Both members and casual riders rode more distant on weekends.
+
+##**Rides during a day**
+
+First, let's see the riders behavior by day of week.
+
+##**Number of rides during a day**
+
+```{r}
+#number of rides per hour during a week
+df8 %>%
+  ggplot(aes(start_hour, fill=customer_type)) +
+    geom_bar(position = "dodge") +
+    labs(x = "Hours", y = "Number of rides", title="Number of rides per hour by days of week") +
+    facet_wrap(~ start_day_of_week) + 
+    scale_fill_discrete(name = "Customer type: ")
+```
+
+Accordingly to the charts above, there are two patterns of the riders behavior: weekdays and weekends. Let's analyse those patterns separately.
+
+```{r}
+# number of rides by rider type and hours separately for weekend/workday
+rides_by_hour <- df8 %>% 
+  group_by(start_hour, customer_type, is_weekend) %>% 
+  summarise(number_of_rides = n(), .groups = 'drop') 
+  
+ggplot(data = rides_by_hour) + geom_bar(mapping = aes(x = start_hour, y = number_of_rides, fill = customer_type), stat='identity', position = "dodge") + 
+  facet_wrap(~is_weekend, labeller = labeller(is_weekend = days.labs)) + 
+  labs(title="Number of rides for casual and member riders during a day",
+       caption="From June 2022 to May 2023",
+       x="Hours during a day",
+       y="Number of rides") + 
+  theme(legend.position="top") + 
+  scale_fill_discrete(name = "Customer type: ")
+
+# calculate and show the ratio of number of rides taken by members to casual riders
+
+rides_by_hour_casual <- rides_by_hour %>% 
+  filter(customer_type == "casual") %>% 
+  rename(number_of_rides_casual = number_of_rides) %>% 
+  select(-customer_type)
+
+rides_by_hour_member <- rides_by_hour %>% 
+  filter(customer_type == "member") %>% 
+  rename(number_of_rides_member = number_of_rides) %>% 
+  select(-customer_type)
+
+rides_by_hour_combined <- merge(rides_by_hour_casual, rides_by_hour_member, by = c('start_hour','is_weekend')) %>% 
+  mutate(ratio = round(number_of_rides_member/number_of_rides_casual, 2))
+
+ggplot(data = rides_by_hour_combined, aes(x = start_hour, y = ratio)) + 
+  geom_bar(stat='identity') + 
+  facet_wrap(~is_weekend, labeller = labeller(is_weekend = days.labs)) + 
+  geom_text(aes(label = ratio), vjust = -0.25, size = 2) +
+  geom_hline(yintercept=1, color = "red") + #draw a line at y = 1
+  annotate("text", x=0.5, y=1.1, label="1.0", color = "red") +
+  labs(title="Ratio of number of rides by members to casual riders during a day",
+       caption="From June 2022 to May 2023",
+       x="Hours during a day",
+       y="Ratio of rides by members to casual riders")
+```
+
+
+```{r}
+# destination points for mornings and evenings
+city_chicago <- c(left = -87.83000, bottom = 41.750000, right = -87.530000, top = 42.06500)
+map_chicago <- get_stamenmap(bbox = city_chicago, zoom = 10, maptype = "terrain")
+
+popular_routes <- df8 %>% 
+  group_by(end_lng, end_lat, customer_type, is_weekend, start_hour) %>%
+  summarize(n_rides = n(),.groups="drop") %>% 
+  filter(n_rides >100)
+
+# locations of end points - morning 
+#popular_routes_morning <- popular_routes %>% 
+ # filter(start_hour %in% c(6, 7, 8, 9))
+  
+ggmap(map_chicago) +
+  geom_point(popular_routes, mapping = aes(x = end_lng, y = end_lat, color=customer_type), size = 0.75) +
+  facet_grid(customer_type ~ is_weekend, labeller = labeller(is_weekend = days.labs)) +
+  labs(title = "Destination points in the morning hours", x=NULL, y=NULL) +
+  scale_colour_discrete("Customer type:")
+
+# locations of end points - evening
+#popular_routes_evening <- popular_routes %>% 
+  #filter(start_hour %in% c(16, 17, 18, 19))
+  
+ggmap(map_chicago) +
+  geom_point(popular_routes, mapping = aes(x = end_lng, y = end_lat, color=customer_type), size = 0.75) +
+  facet_grid(customer_type ~ is_weekend, labeller = labeller(is_weekend = days.labs)) +
+  labs(title = "Destination points in the evening hours", x=NULL, y=NULL) +
+  scale_colour_discrete("Customer type: ")
+```
+
+
+The charts above show, that on weekdays for both members and casual riders, the most popular destination points are concentrated in the city center in the morning, and distributed more outside of the city center in the evening. For members, the area of destination points is wider than for casual riders. Over weekends the destinations are located mostly in the city center, and not that widely distributed on the map.  
+
+We can suppose, that on weekdays both members and casual riders used bikes for activities related to the job, like traveling to work in the morning and back home in the evening. On weekends both members and casual riders probably used bikes mostly for leisure activities, and that's why they have traveled mostly within the city center.  
+
+##**Ride duration during a day**
+
+Let's look at the duration of trips by hours.
+
+```{r}
+# average duration by rider type per hour
+avg_duration_day <- df8 %>% 
+  group_by(start_hour, customer_type, is_weekend) %>% 
+  summarize(avg_duration = mean(duration_s), .groups = 'drop')
+
+ggplot(data = avg_duration_day, aes(x = start_hour, y = avg_duration, fill = customer_type)) +
+  facet_wrap(~is_weekend, labeller = labeller(is_weekend = days.labs)) + 
+  geom_col(position = "dodge") + 
+  #geom_text(aes(label = round(avg_duration)), vjust = -0.25) +
+  labs(title="Average ride duration for casual and member riders during a day",
+       caption="From May 2022 to April 2023",
+       x="Hours during a day",
+       y="Average ride duration (sec)") + 
+  theme(legend.position="top") + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+
+As we can see on the chart, casual riders make in average much longer trips than members - about twice longer in some hours.
+
+Across the members, average ride duration doesn't change very much during the day.
+
+Casual riders made in average about twice shorter rides from 4:00 to 8:00 on weekdays, and slightly longer rides in the middle of the day (10:00 to 15:00) on both weekdays and weekends.
+
+##**Ride distance during a day**
+
+```{r}
+# average distance by rider type per hour
+avg_distance_day <- df8 %>% 
+  group_by(start_hour, customer_type, is_weekend) %>% 
+  summarize(avg_distance = mean(distance_m), .groups = 'drop')
+
+ggplot(data = avg_distance_day, aes(x = start_hour, y = avg_distance, fill = customer_type)) +
+  facet_wrap(~is_weekend, labeller = labeller(is_weekend = days.labs)) +  
+  geom_col(position = "dodge") +
+  labs(title="Average ride distance for casual and member riders during a day",
+       caption="From June 2022 to May 2023",
+       x="Hours during a day",
+       y="Average ride distance (meters)") + 
+  theme(legend.position="top") + 
+  scale_fill_discrete(name = "Customer type: ")
+```
+
+
+We can see, that from 4:00 to 7:00 members go slightly more distant than casual riders.
+
+Casual riders go more distant than members from 10:00 to 15:00 on weekdays, and from 9:00 to 17:00 on Weekends.
+
+##**Steps 5 and 6 - Share and Act**
+The main goals of these steps are to share the analysis main insights and findings to the stakeholders, and give recommendetions which can help to solve the business task.
+
+We have already created necessary visualisations that can be put in a presentation for stakeholders. Now let's write the summary of the analysis results.
+
+##**Insights and findings**
+
+During the last 12 months:
+
+*Members took more rides than casual riders (61.14% vs 38.85%). In autumn and winter, members have made much more rides than casual riders. They also made almost twice more rides on weekdays, compared to casual riders. On weekends the amount of rides made by the both types of riders were about the same.
+
+*Both casual riders and members make more rides from April to November, most of all in summer months. The best riding season for members lasts a month longer.
+
+*Both members and casual riders preferred classic bikes. Members preferred classic bikes even more in comparison to casual members. Members didn't use docked bikes.
+
+*Casual riders were making 88.5% longer rides than members. In winter and autumn the difference in ride duration between members and casual riders is lower than in spring and summer. The longest rides have been made from April to July. The shortest rides have been made in December and January. On weekends the ride duration is higher than on weekdays - especially for casual riders.
+
+*The ride duration for casual riders is almost twice shorter in the early morning hours (4:00 - 8:00). Across members, average ride duration doesn’t change very much during the day.
+
+*Both members and casual riders made rides of about the same distance.
+
+*Both members and casual riders travel mostly in the city center and in the north and west areas of the city.
+
+*On weekdays for both members and casual riders, the most popular destination points are concentrated in the city center in the morning, and distributed more outside of the city center in the evening. For members, the area of destination points is wider than for casual riders.
+
+*For both members and casual riders, destination points are more widely distributed on the map than start points. Start points are more concentrated in the city center.
+
+*The riders behavior for both types of riders differs on weekdays and weekends. On weekdays starting from 6:00 members made much more rides than casual riders. Then the amount of rides drops, and rises again in the evening (15:00 - 17:00).
+
+*On weekends and in early morning hours (0:00 - 6:00) the average amount of rides is about the same for members and casual riders.
+
+*The difference in the riders activity over a year, week and day, and the different behavior patterns on weekdays and weekends can be explained with the rides purposes. Both casual riders and members seem to use the bikes for leisure on weekends - that can be the reason why we see very similar pictures about weekends. Members seem to use bikes for the work purposes more often - that explains their high activity over weekdays and during the autumn and winter months.
+
+##**Recommendations for the business**
+
+**To reach casual riders:**
+
+*Use the customer contact information to reach people, who have already registered as the company's bikes users.
+
+*Target the customers who used the company's bikes regularly but have not bought the annual membership yet.
+
+*Target the customers who have already bought the annual membership before, but didn't extend it to the next year.
+
+**Determine the best date-time ranges and locations for the new marketing campaign:**
+
+*Use the map charts with popular locations to determine the best places for the offline ads (banners, flyers, ads at docking stations, on the bikes themselves, in cafes and public transport, etc.) and to configure the target group for online-ads (to choose the best district-associated groups in social networks, apps for neighbors, etc.)
+
+*Run the new marketing campaign in the warm season (from May to September) and in the evenings, when casual riders are active most.
+
+*To motivate casual riders to buy an annual membership, offer various membership plans to target people with different purpose for the bike usage:
+
+*Offer a weekend-only membership plan to riders who use bikes mostly for leisure, for a lower price than the full-week membership.
+
+*Offer more benefits for members, like an ability to reserve a bike or get it easier during busy hours.
+
+*From our data we see, that casual riders use the bikes mostly for leisure. But among them there still may be people who use bikes for work. To attract them, offer different annual membership plans for people who need bikes for work purposes. Possible offers, which might be attractive for those potential members:
+
+*a weekday-only membership for a better price than the full-week membership.
+*full-week membership with more hours available on weekdays.
+*a membership with discounts during winter and autumn months.
+*Offer a seasonal membership for tourists covering the busiest travel months. That will attract people who use bikes mostly for sightseeing and entertainment in the city.
+
+##**Further analysis**
+
+*Run a survey among the customers who have already bought the annual membership before, but didn't extend it to the next year. The goal of this investigation will be to figure out why those customers stopped the annual membership. That might give ideas about how to improve the annual membership conditions and prices to make it attractive for those and other potential customers.
+
+*Run a survey among members asking what they find satisfying in the membership and how they use the bikes mainly. That will show for what purpose and how members use the company's bikes, and what they appreciate most of all in the company's service and the current membership plans.
+
+*Run a survey among the current casual riders asking about their goals, needs and expectations. That will allow to better understand casual riders' preferences. It might be also good to get more details about who the riders are - are they tourists, employees, students, etc. to think about more specific or personal offers.
+
+*Collect more data and perform a detailed analysis of the customers behavior, including price details (how much the customers have paid for every ride and what membership plans they have used), personal information and an ability to identify all rides taken by the same person. That might give more insights about the reasons why casual riders and members use the company's bikes and why they might avoid buying an annual membership. That may also allow to understand better, how the current price and discount model affects the customers decisions about buying annual memberships, and how it can be improved.
+
+*Collect more information about the destination points to analyse better where the customers are going with the bikes. That might give more insights about the purposes of the rides. We could try to investigate the most popular locations (like offices, shops, gyms, schools, etc.) and use this information to reach potential members. For example, we can work together in partnership with those organisations and offer beneficial annual plans for their employees and customers.
+
+ggsave("Capstone project.pdf")
